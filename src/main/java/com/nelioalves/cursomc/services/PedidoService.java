@@ -39,6 +39,9 @@ public class PedidoService {
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
 
+	@Autowired
+	private EmailService emailService;
+
 	public Pedido find(Integer id) {
 		Optional<Pedido> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
@@ -68,8 +71,7 @@ public class PedidoService {
 		}
 
 		itemPedidoRepository.saveAll(obj.getItens());
-
-		System.out.println(obj.toString());
+		emailService.sendOrderConfirmationEmail(obj);
 
 		return obj;
 	}
