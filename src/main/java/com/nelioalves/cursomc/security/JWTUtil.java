@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -12,19 +13,50 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JWTUtil {
 	@Value("${jwt.secret}")
 	private String secret;
-	
-	
+
 	@Value("${jwt.expiration}")
 	private Long expiration;
 
-	
-	public String generateToken (String username, int idUser) {
-		return Jwts.builder()
-				.setSubject(username)
-				.claim("iduser", idUser) //informação extra ("chave", valor)
+	public String generateToken(String username) {
+		return Jwts.builder().setSubject(username)
 				.setExpiration(new Date(System.currentTimeMillis() + expiration))
-				.signWith(SignatureAlgorithm.HS512, secret.getBytes())
-				.compact();
+				.signWith(SignatureAlgorithm.HS512, secret.getBytes()).compact();
+	}
+
+	public boolean tokenValido(String token) {
+		Claims claims = getClaims(token); // Reinvidicações do Token. (Propriedades do Usuário no caso Cliente e
+											// Expiração).
+		if (claims != null) { // Pegando atributos do Claims)
+			String username = claims.getSubject();
+			Date expirationDate = claims.getExpiration();
+			Date now = new Date(System.currentTimeMillis());
+			if (username != null && expirationDate != null && now.before(expirationDate)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public String getUsername(String token) {
+		Claims claims = getClaims(token); // Reinvidicações do Token. (Propriedades do Usuário no caso Cliente e
+		// Expiração).
+		if (claims != null) { // Pegando atributos do Claims)
+			
+			return claims.getSubject();
+		}
+
+		return null;
+	}
+
+	private Claims getClaims(String token) {
+		try {
+			return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody(); // Recupera os Claims
+																									// a partir de um
+																									// token
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }
