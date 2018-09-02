@@ -20,6 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nelioalves.cursomc.dto.CredenciaisDTO;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+	
+	private static final String AUTH_HEADER = "Authorization";
+	private static final String BEARER_PREFIX = "Bearer ";
 
 	private AuthenticationManager authenticationManager;
 
@@ -54,7 +57,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 		String username = ((UserSS) auth.getPrincipal()).getUsername();
 		String token = jwtUtil.generateToken(username);
-		res.addHeader("Authorization", "Bearer " + token);
+		res.addHeader(AUTH_HEADER, BEARER_PREFIX + token);
 	}
 
 	private class JWTAuthenticationFailureHandler implements AuthenticationFailureHandler {
