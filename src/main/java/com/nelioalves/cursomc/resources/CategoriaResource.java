@@ -22,6 +22,8 @@ import com.nelioalves.cursomc.domain.Categoria;
 import com.nelioalves.cursomc.dto.CategoriaDTO;
 import com.nelioalves.cursomc.services.CategoriaService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping(value="/categorias")
 public class CategoriaResource {
@@ -29,12 +31,14 @@ public class CategoriaResource {
 	@Autowired
 	private CategoriaService service;
 	
+	@ApiOperation(value="Busca Categoria")
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Categoria> find(@PathVariable Integer id) {
 		Categoria obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 	}
 	
+	@ApiOperation(value="Insere Categoria")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDto) {
@@ -45,6 +49,7 @@ public class CategoriaResource {
 		return ResponseEntity.created(uri).build();
 	}
 	
+	@ApiOperation(value="Atualiza Categoria")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id) {
@@ -54,6 +59,7 @@ public class CategoriaResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@ApiOperation(value="Deleta Categoria")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
@@ -61,6 +67,7 @@ public class CategoriaResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@ApiOperation(value="Busca Categorias")
 	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<List<CategoriaDTO>> findAll() {
 		List<Categoria> list = service.findAll();
@@ -68,6 +75,7 @@ public class CategoriaResource {
 		return ResponseEntity.ok().body(listDto);
 	}
 	
+	@ApiOperation(value="Busca Categorias Paginado")
 	@RequestMapping(value="/page", method=RequestMethod.GET)
 	public ResponseEntity<Page<CategoriaDTO>> findPage(
 			@RequestParam(value="page", defaultValue="0") Integer page, 

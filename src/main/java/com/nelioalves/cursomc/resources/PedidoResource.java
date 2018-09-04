@@ -19,6 +19,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.nelioalves.cursomc.domain.Pedido;
 import com.nelioalves.cursomc.services.PedidoService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping(value = "/pedidos")
 public class PedidoResource {
@@ -26,6 +28,7 @@ public class PedidoResource {
 	@Autowired
 	private PedidoService service;
 
+	@ApiOperation(value="Busca Pedido")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Pedido> find(@PathVariable Integer id) {
@@ -33,6 +36,7 @@ public class PedidoResource {
 		return ResponseEntity.ok().body(obj);
 	}
 
+	@ApiOperation(value="Insere Pedido")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody Pedido obj) {
@@ -41,6 +45,7 @@ public class PedidoResource {
 		return ResponseEntity.created(uri).build();
 	}
 
+	@ApiOperation(value="Busca Pedidos")
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Page<Pedido>> findPage(@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,

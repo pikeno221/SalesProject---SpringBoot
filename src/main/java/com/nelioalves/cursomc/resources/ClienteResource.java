@@ -23,6 +23,8 @@ import com.nelioalves.cursomc.dto.ClienteDTO;
 import com.nelioalves.cursomc.dto.ClienteNewDTO;
 import com.nelioalves.cursomc.services.ClienteService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping(value="/clientes")
 public class ClienteResource {
@@ -30,12 +32,14 @@ public class ClienteResource {
 	@Autowired
 	private ClienteService service;
 	
+	@ApiOperation(value="Busca Cliente")
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Cliente> find(@PathVariable Integer id) {
 		Cliente obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 	}
 	
+	@ApiOperation(value="Insere Cliente")
 	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO objDto) {
 		Cliente obj = service.fromDTO(objDto);
@@ -45,7 +49,7 @@ public class ClienteResource {
 		return ResponseEntity.created(uri).build();
 	}
 	
-	
+	@ApiOperation(value="Atualiza Cliente")
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Void> update(@Valid @RequestBody ClienteDTO objDto, @PathVariable Integer id) {
 		Cliente obj = service.fromDTO(objDto);
@@ -54,6 +58,7 @@ public class ClienteResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@ApiOperation(value="Deleta Cliente")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
@@ -61,6 +66,7 @@ public class ClienteResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@ApiOperation(value="Busca Clientes")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<List<ClienteDTO>> findAll() {
@@ -69,7 +75,7 @@ public class ClienteResource {
 		return ResponseEntity.ok().body(listDto);
 	}
 	
-	
+	@ApiOperation(value="Busca Clientes Paginado")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/page", method=RequestMethod.GET)
 	public ResponseEntity<Page<ClienteDTO>> findPage(
