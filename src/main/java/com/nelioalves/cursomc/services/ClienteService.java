@@ -41,7 +41,7 @@ public class ClienteService {
 	private EnderecoRepository enderecoRepository;
 
 	@Autowired
-	private S3Service s3Service;  
+	private S3Service s3Service;
 
 	public Cliente find(Integer id) {
 		UserSS user = UserService.authenticated();
@@ -113,7 +113,18 @@ public class ClienteService {
 	}
 
 	public URI uploadProfilePicture(MultipartFile multipartFile) {
-		return s3Service.uploadFile(multipartFile);
+		UserSS user = UserService.authenticated();
+		if (user == null) {
+			throw new AuthorizationException("Usuário inspirado, por favor, faça novamente o login");
+		}
+
+		Optional<Cliente> obj = repo.findById(user.getId());
+
+		URI uri = s3Service.uploadFile(multipartFile);
+		obj.get().setImageUrl(uri.toString());
+		
+		repo.save(obj.get());
+		return uri;
 	}
 
 }
