@@ -44,10 +44,10 @@ public class ClienteService {
 
 	@Autowired
 	private S3Service s3Service;
-	
+
 	@Autowired
 	private ImageService imageService;
-	
+
 	@Value("${img.prefix.client.profile}")
 	private String prefix;
 
@@ -125,27 +125,23 @@ public class ClienteService {
 		if (user == null) {
 			throw new AuthorizationException("Usuário inspirado, por favor, faça novamente o login");
 		}
-		URI uri = s3Service.uploadFile(multipartFile);
-		
+
 		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
 		String fileName = prefix + user.getId() + ".jpg";
-		
-		
+
 		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
-		
-		// Salvar no Banco 
+
+		// Salvar no Banco
 		/*
+		 * 
+		 * Optional<Cliente> obj = repo.findById(user.getId());
+		 * 
+		 * URI uri = s3Service.uploadFile(multipartFile);
+		 * obj.get().setImageUrl(uri.toString());
+		 * 
+		 * repo.save(obj.get()); return uri;
+		 */
 
-		Optional<Cliente> obj = repo.findById(user.getId());
-
-		URI uri = s3Service.uploadFile(multipartFile);
-		obj.get().setImageUrl(uri.toString());
-		
-		repo.save(obj.get());
-		return uri;
-		*/
-		
 	}
 
-	
 }
