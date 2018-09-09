@@ -51,7 +51,7 @@ public class ClienteService {
 	@Value("${img.prefix.client.profile}")
 	private String prefix;
 
-	public Cliente find(Integer id) {
+	public Cliente findById(Integer id) {
 		UserSS user = UserService.authenticated();
 		if (user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
 			throw new AuthorizationException("Acesso negado");
@@ -63,7 +63,7 @@ public class ClienteService {
 	}
 
 	@Transactional
-	public Cliente insert(Cliente obj) {
+	public Cliente add(Cliente obj) {
 		obj.setId(null);
 		obj = repo.save(obj);
 		enderecoRepository.saveAll(obj.getEnderecos());
@@ -71,13 +71,13 @@ public class ClienteService {
 	}
 
 	public Cliente update(Cliente obj) {
-		Cliente newObj = find(obj.getId());
+		Cliente newObj = findById(obj.getId());
 		updateData(newObj, obj);
 		return repo.save(newObj);
 	}
 
 	public void delete(Integer id) {
-		find(id);
+		findById(id);
 		try {
 			repo.deleteById(id);
 		} catch (DataIntegrityViolationException e) {
@@ -88,6 +88,19 @@ public class ClienteService {
 	public List<Cliente> findAll() {
 		return repo.findAll();
 	}
+	
+	public Cliente findByEmail(String email) {
+		
+		UserSS user = UserService.authenticated();
+		if (user == null || !user.hasRole(Perfil.ADMIN) && !email.equals(user.getUsername())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		Optional<Cliente> obj = repo.findByEmail(email);
+		return obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Objeto não encontrado! Email: " + email + ", Tipo: " + Cliente.class.getName()));
+	}
+	
+	
 
 	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);

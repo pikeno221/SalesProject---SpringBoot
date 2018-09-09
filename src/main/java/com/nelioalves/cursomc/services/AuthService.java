@@ -1,5 +1,6 @@
 package com.nelioalves.cursomc.services;
 
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +28,17 @@ public class AuthService {
 
 	public void sendNewPassword(String email) {
 
-		Cliente cliente = clienteRepository.findByEmail(email);
+		Optional<Cliente> cliente = clienteRepository.findByEmail(email);
 		
-		if (cliente == null) {
-			throw new ObjectNotFoundException("Email não encontrado");
-		}
+		cliente.orElseThrow(() -> new ObjectNotFoundException(
+				"Objeto não encontrado! Id: " + email + ", Tipo: " + Cliente.class.getName()));
+		
 		
 		String newPass = newPassword();
-		cliente.setSenha(pe.encode(newPass));
+		cliente.get().setSenha(pe.encode(newPass));
 
-		clienteRepository.save(cliente);
-		emailService.sendNewPasswordEmail(cliente, newPass);
+		clienteRepository.save(cliente.get());
+		emailService.sendNewPasswordEmail(cliente.get(), newPass);
 	}
 
 	private String newPassword() {
