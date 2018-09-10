@@ -15,11 +15,16 @@ public class EstadoDTO implements Serializable {
 	@NotEmpty(message = "Preenchimento obrigatório")
 	private String nome;
 
-	private List<Cidade> cidades = new ArrayList<>();
+	private List<CidadeDTO> cidades = new ArrayList<>();
 
 	public EstadoDTO(Estado obj) {
 		this.nome = obj.getNome();
-		this.cidades = obj.getCidades();
+		if (obj.getCidades() != null) {
+			for (Cidade cidade : obj.getCidades()) {
+				CidadeDTO cidadeAux = new CidadeDTO(cidade);
+				this.cidades.add(cidadeAux);
+			}
+		}
 	}
 
 	public String getNome() {
@@ -30,11 +35,11 @@ public class EstadoDTO implements Serializable {
 		this.nome = nome;
 	}
 
-	public List<Cidade> getCidades() {
+	public List<CidadeDTO> getCidades() {
 		return cidades;
 	}
 
-	public void setCidades(List<Cidade> cidades) {
+	public void setCidades(List<CidadeDTO> cidades) {
 		this.cidades = cidades;
 	}
 
