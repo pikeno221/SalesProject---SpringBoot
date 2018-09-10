@@ -20,5 +20,8 @@ public class EstadoService {
 		
 		
 	}
+	public Estado find(Integer id) {
+		return repo.findById(id).orElseThrow(() -> new ObjectNotFoundException("Estado não encontrado"));
+	}
 
 }

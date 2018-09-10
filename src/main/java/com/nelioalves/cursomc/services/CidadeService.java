@@ -14,11 +14,14 @@ public class CidadeService {
 
 	@Autowired
 	CidadeRepository repo;
+	public List<Cidade> getCidadesEstado(Integer estado_id) {
+
+		return repo.findCidade(estado_id).orElseThrow(() -> new ObjectNotFoundException("Cidade não encontrada"));
+	}
+	
 	public List<Cidade> getCidades() {
 
-		return repo.findAllByOrderByNome().orElseThrow(() -> new ObjectNotFoundException("Cidade não encontrado"));
-		
-		
+		return repo.findAllByOrderByNome().orElseThrow(() -> new ObjectNotFoundException("Cidade não encontrada"));
 	}
 
 }
